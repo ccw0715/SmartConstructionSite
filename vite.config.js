@@ -5,7 +5,10 @@ import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import path from 'node:path'
 
-export default defineConfig({
+// GitHub Pages 部署在子路径 /SmartConstructionSite/
+// 本地开发使用 '/'，构建时使用子路径
+export default defineConfig(({ command }) => ({
+  base: command === 'build' ? '/SmartConstructionSite/' : '/',
   plugins: [
     vue(),
     AutoImport({ resolvers: [ElementPlusResolver()] }),
@@ -24,4 +27,4 @@ export default defineConfig({
       scss: { api: 'modern-compiler' }
     }
   }
-})
+}))
