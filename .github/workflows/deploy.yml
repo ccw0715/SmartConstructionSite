@@ -33,13 +33,24 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Verify dist directory
+        run: |
+          echo "=== dist/ directory contents ==="
+          ls -la dist/
+          echo ""
+          echo "=== dist/index.html head ==="
+          head -20 dist/index.html
+          echo ""
+          echo "=== checking for /SmartConstructionSite/ prefix ==="
+          grep -c "/SmartConstructionSite/" dist/index.html || (echo "FATAL: base path missing!" && exit 1)
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
+          path: dist
 
   deploy:
     needs: build
