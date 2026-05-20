@@ -8,13 +8,9 @@ export const menus = [
     icon: 'DataLine'
   },
   {
-    title: '工程信息',
-    icon: 'OfficeBuilding',
-    children: [
-      { path: '/admin/project/info',     title: '工程信息管理' },
-      { path: '/admin/project/progress', title: '形象进度' },
-      { path: '/admin/project/parties',  title: '五方主体' }
-    ]
+    path: '/admin/project/list',
+    title: '工程管理',
+    icon: 'OfficeBuilding'
   },
   {
     title: '融合监督',

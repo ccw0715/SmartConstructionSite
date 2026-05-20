@@ -22,10 +22,8 @@ function flattenMenu(items) {
 const realPages = {
   '/admin/dashboard': () => import('@/views/admin/dashboard/Dashboard.vue'),
 
-  // 工程信息
-  '/admin/project/info':     () => import('@/views/admin/project/Info.vue'),
-  '/admin/project/progress': () => import('@/views/admin/project/Progress.vue'),
-  '/admin/project/parties':  () => import('@/views/admin/project/Parties.vue'),
+  // 工程管理（列表 + 详情弹窗）
+  '/admin/project/list': () => import('@/views/admin/project/List.vue'),
 
   // 人员管理
   '/admin/staff/manager':    () => import('@/views/admin/staff/Manager.vue'),

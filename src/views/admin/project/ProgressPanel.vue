@@ -1,10 +1,6 @@
 <template>
-  <PageContainer title="形象进度" desc="工程各阶段实施进度与节点">
-    <template #header>
-      <el-button type="primary" :icon="Plus">新增阶段</el-button>
-    </template>
-
-    <el-row :gutter="16" class="mb-24">
+  <div class="progress-panel">
+    <el-row :gutter="16" class="kpi-row">
       <el-col :sm="8" v-for="kpi in kpis" :key="kpi.label">
         <div class="mini-card">
           <div class="mini-value">{{ kpi.value }}<span class="mini-unit">{{ kpi.unit }}</span></div>
@@ -13,7 +9,7 @@
       </el-col>
     </el-row>
 
-    <el-card>
+    <el-card shadow="never" class="timeline-card">
       <template #header>
         <div class="flex-between">
           <span class="fw-500">阶段时间轴</span>
@@ -41,30 +37,31 @@
         </el-timeline-item>
       </el-timeline>
     </el-card>
-  </PageContainer>
+  </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { Plus } from '@element-plus/icons-vue'
-import PageContainer from '@/components/PageContainer.vue'
+import { ref, computed, watch } from 'vue'
 import StatusTag from '@/components/StatusTag.vue'
 import request from '@/utils/request'
+
+const props = defineProps({
+  projectId: { type: String, required: true }
+})
 
 const loading = ref(true)
 const list = ref([])
 
 async function load() {
   loading.value = true
-  const { data } = await request.get('/project/progress')
+  const { data } = await request.get(`/project/progress/${props.projectId}`)
   list.value = data
   loading.value = false
 }
 
 const overall = computed(() => {
   if (!list.value.length) return 0
-  const total = list.value.reduce((sum, i) => sum + i.progress, 0)
-  return Math.round(total / list.value.length)
+  return Math.round(list.value.reduce((s, i) => s + i.progress, 0) / list.value.length)
 })
 
 const kpis = computed(() => ([
@@ -73,17 +70,15 @@ const kpis = computed(() => ([
   { label: '整体进度', value: overall.value, unit: ' %' }
 ]))
 
-function timelineType(s) {
-  return { done: 'success', active: 'primary', pending: 'info' }[s] || 'info'
-}
-function progressStatus(s) {
-  return { done: 'success', active: '', pending: 'warning' }[s]
-}
+function timelineType(s) { return { done: 'success', active: 'primary', pending: 'info' }[s] || 'info' }
+function progressStatus(s) { return { done: 'success', active: '', pending: 'warning' }[s] }
 
-onMounted(load)
+watch(() => props.projectId, load, { immediate: true })
 </script>
 
 <style lang="scss" scoped>
+.progress-panel { display: flex; flex-direction: column; gap: 16px; }
+.kpi-row { margin: 0; }
 .mini-card {
   background: #fafbfc; border-radius: 6px; padding: 16px 20px;
   display: flex; flex-direction: column; gap: 4px;
@@ -93,4 +88,5 @@ onMounted(load)
 .mini-unit  { font-size: 12px; color: #86909c; font-weight: 400; margin-left: 4px; }
 .mini-label { font-size: 13px; color: #4e5969; }
 .stage-card { background: #fafbfc; border: 1px solid #e5e6eb; }
+.timeline-card :deep(.el-card__body) { padding: 16px 20px; }
 </style>
